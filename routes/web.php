@@ -35,7 +35,9 @@ Route::middleware([
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('videos', '\App\Http\Controllers\VideoController');
+/*Route::get('/home', array(
+    'as' => 'home',
+    'uses' => 'HomeController@index'
+));*/
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
