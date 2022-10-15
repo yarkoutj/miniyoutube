@@ -48,32 +48,27 @@ class VideoController extends Controller
         $user = \Auth::user();
         $video->user_id = $user->id;
         $video->title = $request->input('title');
-        //Subida de la miniatura
-        $image = $request->file('image');
-        if($image){
-            $image_path = time().$image->getClientOriginalName();
-            \Storage::disk('images')->put($image_path, \File::get($image));
-
-            $video->image =$image_path;
-        }
-
         $video->description = $request->input('description');
+
         //Subida de la miniatura
         $image = $request->file('image');
         if($image){
             $image_path = time().$image->getClientOriginalName();
-            \Storage::disk('images')->put($image_path, \File::get($image));
+            \Storage::disk('images')
+                ->put($image_path, \File::get($image));
 
             $video->image =$image_path;
         }
 
         //Subida del video
+
         $video_file = $request->file('video');
         if($video_file){
             $video_path = time().$video_file->getClientOriginalName();
             \Storage::disk('videos')->put($video_path, \File::get($video_file));
             $video->video_path = $video_path;
         }
+
         $video->save();
         return redirect()->route('home')->with(array(
             'message'=> 'El video se ha subido correctamente'
@@ -101,6 +96,13 @@ class VideoController extends Controller
     public function edit($id)
     {
         //
+        $user = \Auth::user();
+        $video = Video::find($id);
+        if($user && $video->user_id == $user->id) {
+            return view('videos.edit', array('video' => $video));
+        }else{
+            return redirect()->route('home');
+        }
     }
 
     /**
@@ -113,6 +115,39 @@ class VideoController extends Controller
     public function update(Request $request, $id)
     {
         //
+        //Validación de formulario
+        $validateData = $this->validate($request, [
+            'title' => 'required|min:5',
+            'description' => 'required',
+            'video' => 'mimes:mp4'
+        ]);
+        $video = Video::find($id);
+        $video->title = $request->input('title');
+        $video->description = $request->input('description');
+
+        //Subida de la miniatura
+        $image = $request->file('image');
+        if($image){
+            $image_path = time().$image->getClientOriginalName();
+            \Storage::disk('images')
+                ->put($image_path, \File::get($image));
+
+            $video->image =$image_path;
+        }
+
+        //Subida del video
+
+        $video_file = $request->file('video');
+        if($video_file){
+            $video_path = time().$video_file->getClientOriginalName();
+            \Storage::disk('videos')->put($video_path, \File::get($video_file));
+            $video->video_path = $video_path;
+        }
+
+        $video->update();
+        return redirect()->route('home')->with(array(
+            'message'=> 'El video se ha subido correctamente'
+        ));
     }
 
     /**

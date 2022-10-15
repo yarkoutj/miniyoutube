@@ -2,9 +2,10 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <h2>Crear un nuevo video</h2>
+            <h2>Editar video {{$video->id}}</h2>
             <hr>
-            <form action="{{ route('videos.store') }}" method="post" enctype="multipart/form-data" class="col-lg-7">
+            <form action="{{route('videos.update',$video->id)}}" method="post" enctype="multipart/form-data" class="col-lg-7">
+                @method('PUT')
                 {!! csrf_field() !!}  <!-- Protección contra ataques ya implementado en laravel  https://www.welivesecurity.com/la-es/2015/04/21/vulnerabilidad-cross-site-request-forgery-csrf/-->
                 @if($errors->any())
                     <div class="alert alert-danger">
@@ -18,22 +19,22 @@
 
                 <div class="form-group">
                     <label for="title">Título</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{old('title')}}"
+                    <input type="text" class="form-control" id="title" name="title" value="{{$video->title}}"
                     />
                 </div>
                 <div class="form-group">
                     <label for="description">Descripción</label>
-                    <textarea class="form-control" id="description" name="description" value="{{old('description')}}"></textarea>
+                    <textarea class="form-control" id="description" name="description">{{$video->description}}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="image">Miniaturas</label>
-                    <input type="file" class="form-control" id="image" name="image"/>
+                    <input type="file" class="form-control" id="image" name="image" value="{{$video->image}}"/>
                 </div>
                 <div class="form-group">
                     <label for="video">Archivo de Vídeo</label>
-                    <input type="file" class="form-control" id="video" name="video"/>
+                    <input type="file" class="form-control" id="video" name="video" value="{{$video->video}}"/>
                 </div>
-                <button type="submit" class="btn btn-success">Crear Vídeo</button>
+                <button type="submit" class="btn btn-success">Editar Vídeo</button>
             </form>
         </div>
     </div>
